@@ -1,6 +1,18 @@
 import express from "express";
 const app = express();
 import "express-async-errors";
+import client from "prom-client"; //for metric collection
+const collectDefaultMetrics = client.collectDefaultMetrics; //for metric collection
+
+
+// ------------Prometheus------------ //
+collectDefaultMetrics({ timeout: 5000 }); // collect every 5 seconds
+app.get("/metrics", (req, res) => {
+  res.set("Content-Type", client.register.contentType);
+  res.end(client.register.metrics());
+});
+
+
 
 import dotenv from "dotenv";
 dotenv.config();
