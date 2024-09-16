@@ -7,19 +7,27 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// WINSTON LOKI
-const { createLogger, transports } = require("winston");
-const LokiTransport = require("winston-loki");
+// WINSTON LOKI SETUP
+import { createLogger, format, transports } from "winston";
+import LokiTransport from "winston-loki";
 
-const options = {
-  level: 'info',  // Log info and error messages
+// Configure Winston logger to use Loki transport
+const logger = createLogger({
+  level: 'info', // Default log level
+  format: format.combine(
+    format.timestamp(),
+    format.json()
+  ),
   transports: [
     new LokiTransport({
       host: "http://34.199.70.236:3100",
+      labels: { job: "my-backend-server" }, // Add labels to logs to distinguish different apps
+      json: true,
+      level: "info", // Log both info and error levels
+      replaceTimestamp: true,
     })
   ]
-};
-const logger = createLogger(options);
+});
 
 // ------------DB & AuthenticateUser------------ //
 import connectDB from "./db/connect.js";
