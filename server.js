@@ -7,6 +7,20 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+//WINSTON loki
+const { createLogger, transports } = require("winston");
+const LokiTransport = require("winston-loki");
+const options = {
+  ...,
+  transports: [
+    new LokiTransport({
+      host: "http://34.199.70.236:3100"
+    })
+  ]
+  ...
+};
+const logger = createLogger(options);
+
 // ------------DB & AuthenticateUser------------ //
 import connectDB from "./db/connect.js";
 import morgan from "morgan";
