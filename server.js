@@ -10,8 +10,9 @@ const port = process.env.PORT || 5000;
 // WINSTON LOKI
 const { createLogger, transports } = require("winston");
 const LokiTransport = require("winston-loki");
+
 const options = {
-  level: 'error',  // Ensure only error logs are sent to Loki
+  level: 'info',  // Log info and error messages
   transports: [
     new LokiTransport({
       host: "http://34.199.70.236:3100",
@@ -103,17 +104,25 @@ app.use((req, res, next) => {
   next();
 });
 
-// ------------ API Routes with Error Logging ------------ //
+// ------------ API Routes with Logging ------------ //
 app.get("/api/v1", (req, res) => {
+  logger.info("GET /api/v1 - Welcome route hit", { method: req.method, route: req.route?.path });
   res.json("Welcome!");
 });
 
-app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/auth", (req, res, next) => {
+  logger.info(`Request to auth route: ${req.method} ${req.originalUrl}`);
+  next();
+}, authRouter);
 
-app.use("/api/v1/jobs", authenticateUser, jobsRouter);
+app.use("/api/v1/jobs", authenticateUser, (req, res, next) => {
+  logger.info(`Request to jobs route: ${req.method} ${req.originalUrl}`);
+  next();
+}, jobsRouter);
 
 // Catch-all route for React-Router SPA
 app.get("*", (req, res) => {
+  logger.info("Serving index.html for React routes");
   res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
 });
 
@@ -136,6 +145,7 @@ const start = async () => {
   try {
     await connectDB(process.env.MONGO_URL);
     app.listen(port, () => {
+      logger.info(`Server is listening on http://localhost:${port}`);
       console.log(`Server is listening on http://localhost:${port}`);
     });
   } catch (error) {
@@ -143,4 +153,5 @@ const start = async () => {
     console.log(error);
   }
 };
+
 start();
