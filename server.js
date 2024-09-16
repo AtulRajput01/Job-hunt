@@ -7,17 +7,16 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-//WINSTON loki
+// WINSTON LOKI
 const { createLogger, transports } = require("winston");
 const LokiTransport = require("winston-loki");
 const options = {
-  ...,
+  level: 'error',  // Ensure only error logs are sent to Loki
   transports: [
     new LokiTransport({
-      host: "http://34.199.70.236:3100"
+      host: "http://34.199.70.236:3100",
     })
   ]
-  ...
 };
 const logger = createLogger(options);
 
@@ -29,7 +28,7 @@ import morgan from "morgan";
 import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobsRouter.js";
 
-// ------------middleware------------ //
+// ------------Middleware------------ //
 import notFoundMiddleware from "./middlewares/not-found.js";
 import errorHandlerMiddleware from "./middlewares/error-handler.js";
 import authenticateUser from "./middlewares/auth.js";
@@ -104,30 +103,43 @@ app.use((req, res, next) => {
   next();
 });
 
-// ------------API Routes------------ //
+// ------------ API Routes with Error Logging ------------ //
 app.get("/api/v1", (req, res) => {
   res.json("Welcome!");
 });
+
 app.use("/api/v1/auth", authRouter);
+
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
-// direct to index.html for react-router after the 2 routes above
+// Catch-all route for React-Router SPA
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
+});
+
+// ------------ Error Logging Middleware ------------ //
+app.use((err, req, res, next) => {
+  logger.error(`Error: ${err.message}`, {
+    method: req.method,
+    route: req.route?.path || req.url,
+    status: res.statusCode,
+    stack: err.stack
+  });
+  next(err); // Pass error to next middleware (error handler)
 });
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
+// ------------ Start Server ------------ //
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URL);
-
-    // only connect to server if successfully-connected to DB
-    app.listen(port, () =>
-      console.log(`Server is listening on http://localhost:${port}`)
-    );
+    app.listen(port, () => {
+      console.log(`Server is listening on http://localhost:${port}`);
+    });
   } catch (error) {
+    logger.error(`Failed to start server: ${error.message}`, { stack: error.stack });
     console.log(error);
   }
 };
