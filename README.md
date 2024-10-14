@@ -15,12 +15,30 @@
 <br>
 <br>
 
-![landing](https://user-images.githubusercontent.com/76480451/210046660-894b3928-ccc3-4efe-9160-33341549531a.png)
-![stats](https://user-images.githubusercontent.com/76480451/210046658-2809f5bb-6843-4719-91d0-9755474cb1cb.png)
-![allJobs](https://user-images.githubusercontent.com/76480451/210046652-800f5c65-fbdb-4689-bc09-f8b138b384c8.png)
-![addJobs](https://user-images.githubusercontent.com/76480451/210046661-44c6d3df-f7e3-4b61-a000-f10e045b9742.png)
+![hunt0](https://github.com/user-attachments/assets/4241f219-b31f-4368-acf9-641492fac2b0)
+![hunt1](https://github.com/user-attachments/assets/a5cad2a3-1460-4841-9ae2-dcf8c5eefb7a)
+![hunt2](https://github.com/user-attachments/assets/9d535923-e32b-4fe8-977c-474fdb9c2dcc)
+![hunt4](https://github.com/user-attachments/assets/16e345d8-7d21-4546-babd-0829169a8310)
 
 </div>
+
+<!-- MONITORING -->
+
+## Monitoring
+![monit](https://github.com/user-attachments/assets/75425731-1178-40d4-bd02-6b44d04039dc)
+
+For monitoring the application's health and performance, we are utilizing Prometheus, Grafana, and Loki.
+
+- **Prometheus** is used for scraping and collecting application metrics, providing real-time monitoring and alerting capabilities.
+- **Grafana** is integrated with Prometheus to visualize the data, allowing for detailed and customizable dashboards.
+- **Loki** is employed for logging, enabling efficient and scalable log aggregation, search, and monitoring alongside the metrics in Grafana.
+
+This monitoring stack ensures that the system remains reliable and that any performance bottlenecks or issues can be quickly identified and resolved.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -73,7 +91,7 @@ MERN Stack Application for tracking Job Search Process
 
 | Email                 | Password |
 | --------------------- | -------- |
-| amit@gmail.com | 123456   |
+| atul@gmail.com | 123456   |
 
 #### Validation
 
