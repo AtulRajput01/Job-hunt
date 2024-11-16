@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: job-hunt-replicaset
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: job-hunt
+  template:
+    metadata:
+      labels:
+        app: job-hunt
+    spec:
+      containers:
+      - name: job-hunt-container
+        image: job-hunt:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000  # Expose the container's internal port
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: job-hunt-service
+spec:
+  selector:
+    app: job-hunt
+  ports:
+    - protocol: TCP
+      port: 5000           # Internal cluster port
+      targetPort: 5000     # Pod's container port
+      nodePort: 30000      # External port on each node's IP (adjust as needed)
+  type: NodePort           # Makes the service accessible externally
