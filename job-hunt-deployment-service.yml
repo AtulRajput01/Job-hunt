@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-hunt-deployment
+  labels:
+    app: job-hunt
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: job-hunt
+  template:
+    metadata:
+      labels:
+        app: job-hunt
+    spec:
+      containers:
+        - name: job-hunt
+          image: amazingatul/job-hunt:latest
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: job-hunt-service
+spec:
+  selector:
+    app: job-hunt
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: LoadBalancer
